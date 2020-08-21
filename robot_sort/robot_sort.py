@@ -1,6 +1,6 @@
 class SortingRobot:
     def __init__(self, l):
-        #SortingRobot takes a list and sorts it.
+        # SortingRobot takes a list and sorts it.
         self._list = l          # The list the robot is tasked with sorting
         self._item = None       # The item the robot is holding
         self._position = 0      # The list position the robot is at
@@ -69,54 +69,99 @@ class SortingRobot:
         # Returns True if the robot's light is on and False otherwise.
         return self._light == "ON"
 
+
     def sort(self):
-        # on the first pass when robot has no item...
-        if self.light_is_on() == False:
-            # pick up the first number in the list, turn light on, move right
+        # Insertion Sort, two loops
+        # while we can move right and the light is off
+        while self.can_move_right() and self.light_is_on() is False:
+            # move right, pick up the item, and turn on the light (item is being held)
+            self.move_right()
             self.swap_item()
             self.set_light_on()
-            self.move_right()
-        # compare items - if None then swap, light off, move right, call recursively
-        if self.compare_item() is None:
-            self.swap_item()
-            self.set_light_off()
-            self.move_right()
-            self.sort()
-        # compare items - if held item is bigger, swap and move right, call recursively
-        elif self.compare_item() > 0 :
-            self.swap_item()      
-            if self.can_move_right():
-                self.move_right()
-                self.sort()
-            # if can't move right...
-            else:
-                # if light is on, move all the way left and call recursively
-                if self.light_is_on():
-                    while self.can_move_left():
-                        self.move_left()
-                        self.sort
-                # if light is off, list is sorted, return it
-                else:
-                    return self._list
-        # compare items - if held item is smaller move right, calling recursively
-        else:
-            if self.can_move_right():
-                self.move_right()
-                self.sort()
-            # if can't move right, move all the way left, call recursively
-            else:
-                while self.can_move_left():
+
+            # this runs after we're done going right, if we can move left and light is on...
+            while self.can_move_left() and self.light_is_on():
+                # begin moving left again
+                self.move_left()
+                # if the held item is smaller than the one you're in front of
+                if self.compare_item() == -1:
+                    # swap items, pick up the bigger one
+                    self.swap_item()
+                    # go back to the empty slot and place the bigger number there
+                    self.move_right()
+                    self.swap_item()
+                    self.set_light_off()
+                    # then move back to the left, pick up this smaller number and repeat
                     self.move_left()
-                    # self.sort()
-                
+                    self.swap_item()
+                    self.set_light_on()
+                # if the held item is larger than the one you're in front of
+                else:
+                    # move over put the larger number into the empty slot, repeat 
+                    self.move_right()
+                    self.swap_item()
+                    self.set_light_off()
+
+            # if you've reached all the way to the left, put the last item down and the list is sorted
+            if self.can_move_left() is False:
+                self.swap_item()
+                self.set_light_off()
         
-        # when hit the end of the list, and light is on, move all the way left
-        # compare, if bigger, move right, compare, if NONE, swap turn light off
-        # move right, pick up turn light on
-        # move right, if bigger swap and move right, if smaller move right
-        
-        # continue
-        # if you reach the end with light off, list is sorted
+    ## Prior Attempt using Recursion
+    #     def find_empty(self):
+    #     if (self.compare_item() is None and self.light_is_on()):
+    #         self.sort()
+    #     elif (self.light_is_on() and self.compare_item() > 0):
+    #         self.move_right()
+    #         self.find_empty()
+
+
+    # def sort(self):
+    #     # compare items - if None then swap, switch light, move right, call recursively
+    #     if self.compare_item() is None:
+    #         self.swap_item()
+    #         if self.light_is_on():
+    #             self.set_light_off()
+    #         else:
+    #             self.set_light_on()
+    #         self.move_right()
+    #         self.sort()
+    #     # compare items - if held item is bigger, swap and move right, call recursively
+    #     elif self.compare_item() > 0 :
+    #         self.swap_item()    
+    #         if self.can_move_right():
+    #             self.move_right()
+    #             self.sort()
+    #         # if can't move right...
+    #         else:                
+    #             # if light is on, move all the way left and call recursively
+    #             if self.light_is_on():
+    #                 # check if 2nd to last spot is the blank
+    #                 self.move_left()
+    #                 if (self.compare_item() is None):
+    #                     self.swap_item()
+    #                     return self._list
+    #                 while self.can_move_left():
+    #                     self.move_left()
+    #                 self.find_empty()
+
+    #             # if light is off, list is sorted, return it
+    #             else:
+    #                 return self._list
+    #     # compare items - if held item is smaller move right, calling recursively
+    #     else:
+    #         if self.can_move_right():
+    #             self.move_right()
+    #             self.sort()
+    #         # if can't move right, move all the way left, call recursively
+    #         else:
+    #             self.move_left()
+    #             if (self.light_is_on() and self.compare_item() is None):
+    #                 self.swap_item()
+    #                 return self._list
+    #             while self.can_move_left():
+    #                 self.move_left()
+    #             self.find_empty()
 
 
 if __name__ == "__main__":
